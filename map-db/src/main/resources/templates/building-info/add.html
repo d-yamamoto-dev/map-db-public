@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link th:href="@{/css/add.css}" rel="stylesheet" />
+</head>
+
+<script>
+    function reloadMapWindow() {
+        parent.location.reload()
+    }
+</script>
+
+<body>
+    <div class="container">
+        <!-- <h1>建物情報登録</h1> -->
+        <form th:action="@{/map-db/building-info/create}" th:object="${buildingInfoDto}" th:method="post">
+
+            <div class="form-group">
+                <input type="hidden" th:value="${buildingId}" name="buildingId" class="form-control">
+            </div>
+
+            <div class="form-gropu">
+                <label id="name-header">名前</label>
+                <br>
+                <input type="text" th:field="*{name}" id="name-value" class="form-control">
+            </div>
+
+            <div class="form-gropu">
+                <label id="address-header">住所</label>
+                <br>
+                <input type="text" th:field="*{address}" id="address-value" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <input type="hidden" th:value="${lat}" name="latitude" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <input type="hidden" th:value="${lng}" name="longtitude" class="form-control">
+            </div>
+            <br />
+            <div class="text-center">
+                <input type="submit" value=" 登録 " id="submit-btn" class="btn btn-primary" th:onclick="reloadMapWindow()">
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

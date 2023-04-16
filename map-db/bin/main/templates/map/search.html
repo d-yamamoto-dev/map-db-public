@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Search Building in A Map</title>
+    <link th:href="@{https://unpkg.com/leaflet@1.9.2/dist/leaflet.css}" rel="stylesheet" />
+    <link th:href="@{/css/search.css}" rel="stylesheet" />
+    <script type="text/javascript" th:src="@{https://unpkg.com/leaflet@1.9.2/dist/leaflet.js}"></script>
+
+    <style>
+        .infostyle {
+            border: solid 1px;
+            background-color: azure;
+            border-radius: 10px;
+            opacity: 0.8;
+            padding: 5px;
+            font-size: 15px;
+            color: black;
+        }
+    </style>
+
+    <script type="text/javascript" th:inline="javascript">
+        var map;
+        function init() {
+            map = L.map('map-id', { zoomCotrol: false });
+            map.setView([43.151505, 141.655655], 15);
+            var gsiattr = "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>";
+            var gsi = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', { attribution: gsiattr });
+            var gsipale = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png', { attribution: gsiattr });
+            var osm = L.tileLayer('http://tile.openstreetmap.jp/{z}/{x}/{y}.png', { attribution: "<a href='http://osm.org/copyright' target='_blank'>OpenStreetMap</a> contributors" });
+
+            var gsirelief = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/relief/{z}/{x}/{y}.png', { opacity: 0.7, maxNativeZoom: 15, attribution: gsiattr });
+            var gsirehillshademap = L.tileLayer('http://cyberjapandata.gsi.go.jp/xyz/hillshademap/{z}/{x}/{y}.png', { opacity: 0.5, maxNativeZoom: 16, attribution: gsiattr });
+            var baseMaps = {
+                "地理院地図": gsi,
+                "淡色地図": gsipale,
+                "オープンストリートマップ": osm
+            };
+            var overlayMaps = {
+                "識別標高図": gsirelief,
+                "陰影起伏図": gsirehillshademap
+            };
+            L.control.layers(baseMaps, overlayMaps).addTo(map);
+            gsi.addTo(map);
+
+            map.on('mousemove', onMapMousemove)
+            var cordinatesInfo = L.control({ position: "bottomleft" });
+            cordinatesInfo.onAdd = function (map) {
+                this.ele = L.DomUtil.create('div', "infostyle");
+                this.ele.id = "cordinates-info-div";
+                this.ele.style.visibility = "hidden";
+                this.ele.onmousemove = function (e) { e.stopPropagation() };
+                return this.ele;
+            };
+            cordinatesInfo.addTo(map);
+
+            // 全マーカー表示
+            var buildingInfo = /*[[${buildingInfoList}]]*/[];
+            for (var i in buildingInfo) {
+                var latitude = buildingInfo[i].latitude;
+                var longtitude = buildingInfo[i].longtitude;
+                L.marker([parseFloat(latitude), parseFloat(longtitude)], { customId: buildingInfo[i].buildingId, riseOnHover: true }).addTo(map).on('click', onMarkerClick);
+            };
+
+            map.on('click', onMapClick);
+        }
+        function onMapMousemove(e) {
+            var box = document.getElementById("cordinates-info-div");
+            var html = "lat:" + e.latlng.lat.toFixed(6) + "<br>" +
+                "lng:" + e.latlng.lng.toFixed(6);
+            box.innerHTML = html;
+            box.style.visibility = "visible";
+        };
+        function onMapClick(e) {
+            // L.marker(e.latlng).on('click', onNewMarkerClick).addTo(map);
+            L.marker(e.latlng).addTo(map);
+            var subWin = window.open("/map-db/building-info/add?" + "lat=" + e.latlng.lat.toFixed(6) + "&lng=" + e.latlng.lng.toFixed(6), "新規登録", "width=450,height=450");
+            subWin.focus();
+        };
+        function onMarkerClick(e) {
+            var subWin = window.open('/map-db/building-info/' + this.options.customId, "建物情報詳細", "width=450,height=450");
+            subWin.focus();
+        };
+        // function onNewMarkerClick(e) {
+
+        // }
+    </script>
+</head>
+
+<body th:onload="init()">
+    <div class="search-map">
+        <div id="map-id" class="map-window" style="position:absolute;top:0;left:0;right:0;bottom:0;"></div>
+    </div>
+</body>
+
+</html>

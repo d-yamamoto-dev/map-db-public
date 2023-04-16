@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link th:href="@{/css/get.css}" rel="styleSheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- <h1>建物詳細情報</h1> -->
+        <div th:object="${buildingInfo}">
+            <!-- <div class="row mx-md-n5">
+                <div class="col-2 pt-3 border bg-light">建物ID</div>
+                <div class="col pt-3 border">
+                    <p th:text="*{buildingId}"></p>
+                </div>
+            </div> -->
+            <div id="get-name" class="row mx-md-n5">
+                <div id="get-name-header" class="col-2 pt-3 border bg-light">氏名</div>
+                <div id="get-name-value" class="col pt-3 border">
+                    <p th:text="*{name}"></p>
+                </div>
+            </div>
+            <div id="get-address" class="row mx-md-n5">
+                <div id="get-address-header" class="col-2 pt-3 border bg-light">住所</div>
+                <div id="get-address-value" class="col pt-3 border">
+                    <p th:text="*{address}"></p>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="text-center">
+            <a id="list-btn" href="/map-db/building-info/list" class="btn btn-secondary">一覧に戻る</a>
+        </div>
+    </div>
+</body>
+
+</html>

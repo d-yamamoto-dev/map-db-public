@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http: //www.thymeleaf.org">
+
+<head>
+    <link th:href="@{/css/list.css}" rel="styleSheet">
+</head>
+
+<script type="text/javascript">
+    function dispBuildingInfoDetail(url) {
+        window.location.href = url;
+        // var left = window.parent.screen.width;
+        // var subWin = window.open(url, "建物詳細", "width=450,height=450");
+        // subWin.focus();
+    }
+    function reloadMap() {
+        window.opener.location.reload(true)
+    }
+</script>
+
+<body>
+    <div class="container">
+        <!-- <h1>建物情報一覧</h1> -->
+        <!-- <div class="float-end">
+            <a th:href="@{/map-db/building-info/add}" class="btn btn-primary">新規登録</a>
+        </div> -->
+        <input type="button" id="reload-btn" value="地図更新" th:onclick="reloadMap()">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <!-- <th>建物ID</th> -->
+                    <th id="name-header">氏名</th>
+                    <th id="address-header" >住所</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="buildingInfo:${buildingInfoList}" th:object="${buildingInfo}" class="align-middle">
+                    <!-- <td th:text="*{buildingId}"></td> -->
+                    <td th:text="*{name}"></td>
+                    <td th:text="*{address}"></td>
+                    <td><input type="button" value="詳細" class="detail-btn"
+                            th:attr="onClick='dispBuildingInfoDetail(\'/map-db/building-info/' + *{buildingId} + '\')'">
+                    </td>
+                    <!-- <td><a th:href="@{/map-db/building-info/{buildingId}(buildingId=*{buildingId})}"
+                            class="btn btn-secondary">詳細</a></td> -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
